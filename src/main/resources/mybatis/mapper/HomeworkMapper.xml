@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzhy.mapper.HomeworkMapper">
+    <insert id="postHomework" parameterType="com.wzhy.pojo.Homework">
+    insert into class.homework (homeworkId, publishDate, homeworkName, homeworkIntroduction, deadline, maxScore, operateModel)
+    values (#{homeworkId}, #{publishDate}, #{homeworkName}, #{homeworkIntroduction}, #{deadline}, 100,0)
+    </insert>
+    <insert id="postCouHomework" parameterType="com.wzhy.pojo.CouHomework">
+    insert into class.couhomework (courseId, homeworkId, submitState, piyueCount, score)
+    values (#{courseId}, #{homeworkId},"未交", 0, 0)
+    </insert>
+    <insert id="postStuHomework" parameterType="com.wzhy.pojo.StuHomework">
+        insert into class.stuhomework (studentId, homeworkId, submitDate, message, submitState, scores)
+        values (#{studentId}, #{homeworkId}, #{submitDate},#{message} , #{submitState}, #{scores})
+    </insert>
+    <select id="getStuHomework" resultType="com.wzhy.pojo.StuHomework">
+        select studentId,homeworkId,message from class.stuhomework where studentId=#{studentId}
+    </select>
+<!--    批改作业-->
+    <update id="pigaizuoye" parameterType="com.wzhy.pojo.StuHomework">
+                update class.stuhomework set scores=#{scores} where homeworkId = #{homeworkId} and studentId=#{studentId}
+
+    </update>
+    <select id="getHomeworkList" resultType="com.wzhy.pojo.Homework">
+        select * from class.homework h,class.course c,class.couhomework ch where c.courseId = ch.courseId and ch.homeworkId  = h.homeworkId;
+    </select>
+    <select id="getHomeworkById" resultType="com.wzhy.pojo.Homework">
+        select * from class.homework where homeworkId=#{homeworkId}
+    </select>
+    <select id="getScore" resultType="com.wzhy.pojo.StuHomework">
+        select * from class.stuhomework
+    </select>
+        </mapper>

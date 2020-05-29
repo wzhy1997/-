@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+                PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzhy.mapper.UserMapper">
+<resultMap id="UserMap" type="com.wzhy.pojo.User" >
+    <id column="userId" property="id"/>
+    <result column="userPassword" property="password"/>
+    <result column="userName" property="username"/>
+    <result column="userSchool" property="userSchool"/>
+    <result column="userRole" property="userRole"/>
+</resultMap>
+    <select id="loadUserByUsername" resultMap="UserMap">
+        select * from class.users where userId=#{id}
+    </select>
+    <insert id="insertUser" parameterType="com.wzhy.pojo.User">
+        insert into class.users (userId, userPassword, userName, userSchool, userRole)
+        values (#{id}, #{password}, #{username}, #{userSchool}, #{userRole})
+    </insert>
+        </mapper>

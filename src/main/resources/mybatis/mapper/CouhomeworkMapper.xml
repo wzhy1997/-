@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzhy.mapper.CouHomeworkMapper">
+    <resultMap id="CouHomeworkMap" type="com.wzhy.pojo.CouHomework" >
+        <id column="courseId" property="courseId"/>
+        <result column="homeworkId" property="homeworkId"/>
+        <result column="submitState" property="submitState"/>
+        <result column="piyueCount" property="piyueCount"/>
+        <association property="homework" javaType="com.wzhy.pojo.Homework">
+            <id column="homeworkId" property="homeworkId"/>
+            <result column="publishDate" property="publishDate"/>
+            <result column="homeworkName" property="homeworkName"/>
+            <result column="homeworkIntroduction" property="homeworkIntroduction"/>
+            <result column="deadline" property="deadline"/>
+            <result column="maxScore" property="maxScore"/>
+            <result column="operateModel" property="operateModel"/>
+        </association>
+     <collection property="listStudent" ofType="com.wzhy.pojo.Student">
+         <id column="studentId" property="studentId"/>
+         <result column="studentPassword" property="studentPassword"/>
+         <result column="studentName" property="studentName"/>
+         <result column="studentNumber" property="studentNumber"/>
+         <result column="studentSchool" property="studentSchool"/>
+         <result column="role" property="role"/>
+         <association property="stuHomework" javaType="com.wzhy.pojo.StuHomework">
+             <id column="studentId" property="studentId"/>
+             <result column="homeworkId" property="homeworkId"/>
+             <result column="submitDate" property="submitDate"/>
+             <result column="message" property="message"/>
+             <result column="submitState" property="submitState"/>
+             <result column="submitCount" property="submitCount"/>
+             <result column="scores" property="scores"/>
+         </association>
+     </collection>
+    <collection property="listTeacher" ofType="com.wzhy.pojo.Teacher">
+        <id column="teacherId" property="teacherId"/>
+        <result column="teacherPassword" property="teacherPassword"/>
+        <result column="teacherName" property="teacherName"/>
+        <result column="teacherSchool" property="teacherSchool"/>
+        <result column="role" property="role"/>
+    </collection>
+    </resultMap>
+<select id="getStuCourse" resultMap="CouHomeworkMap">
+  select * from class.course c ,class.stucourse s,class.couhomework ch,class.students s2 ,class.stuhomework sh
+where c.courseId =#{courseId}  and ch.homeworkId =#{homeworkId} and c.courseId =s.courseId and c.courseId  = ch.courseId  and s.studentId =s2.studentId
+and sh.studentId =s.studentId
+</select>
+    <select id="queryHomework" resultMap="CouHomeworkMap">
+        select * from class.course c,class.stucourse sc,class.teachers t,class.students s
+        ,class.teacourse tc,class.homework h,class.stuhomework sh,class.couhomework ch
+    where h.homeworkId = #{id}
+     and h.homeworkId = ch.homeworkId
+      and ch.courseId =  c.courseId
+       and c.courseId = tc.courseId
+       and tc.teacherId = t.teacherId
+    </select>
+    <insert id="postWork" parameterType="com.wzhy.pojo.StuHomework">
+        insert  into class.stuhomework (studentId, homeworkId, submitDate, message, submitState, scores)
+        values (#{studentId}, #{homeworkId}, #{submitDate}, #{message}, "已提交", 0)
+    </insert>
+</mapper>

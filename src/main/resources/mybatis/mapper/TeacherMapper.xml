@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzhy.mapper.TeacherMapper">
+<!--    老师注册-->
+    <resultMap id="teacherMap" type="com.wzhy.pojo.Teacher">
+        <id column="teacherId" property="teacherId"/>
+        <id column="teacherPassword" property="teacherPassword"/>
+        <id column="teacherName" property="teacherName"/>
+        <id column="studentNumber" property="studentNumber"/>
+        <id column="role" property="role"/>
+    </resultMap>
+    <select id="getTeacherById" resultMap="teacherMap">
+    select * from class.teachers where teacherId=#{id}
+</select>
+    <insert id="insertTeacher" parameterType="com.wzhy.pojo.Teacher">
+        insert into class.teachers (teacherId, teacherPassword, teacherName, teacherSchool, role)
+        values  (#{teacherId}, #{teacherPassword}, #{teacherName}, #{teacherSchool}, #{role})
+    </insert>
+</mapper>
+<!--insertTeacher-->

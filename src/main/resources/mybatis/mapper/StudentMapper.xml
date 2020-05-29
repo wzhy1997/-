@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzhy.mapper.StudentMapper">
+
+    <resultMap id="studentMap" type="com.wzhy.pojo.Student">
+        <id column="studentId" property="studentId"/>
+        <id column="studentPassword" property="studentPassword"/>
+        <id column="studentName" property="studentName"/>
+        <id column="studentNumber" property="studentNumber"/>
+        <id column="studentSchool" property="studentSchool"/>
+        <id column="role" property="role"/>
+    </resultMap>
+
+<select id="getStudentById" resultMap="studentMap">
+    select * from class.students where studentId =#{id}
+</select>
+    <insert id="insertStudent" parameterType="com.wzhy.pojo.Student">
+        insert into class.students (studentId, studentPassword, studentName, studentNumber, studentSchool, role)
+        values (#{studentId}, #{studentPassword}, #{studentName}, #{studentNumber}, #{studentSchool}, #{role})
+    </insert>
+</mapper>
+        <!--insertTeacher-->

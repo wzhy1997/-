@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wzhy.mapper.CourseMapper">
+    <!--    老师注册-->
+<resultMap id="courseMap" type="com.wzhy.pojo.Course">
+    <id property="courseId" column="courseId"/>
+    <result property="courseName" column="courseName"/>
+    <result property="courseClass" column="courseClass"/>
+    <result property="courseYear" column="courseYear"/>
+    <result property="courseTerm" column="memberCount"/>
+    <result property="memberCount" column="memberCount"/>
+    <result property="operateModel" column="operateModel"/>
+    <association property="teacher" javaType="com.wzhy.pojo.Teacher">
+        <id property="teacherId" column="teacherId"/>
+        <result property="teacherPassword" column="teacherPassword"/>
+        <result property="teacherName" column="teacherName"/>
+        <result property="teacherSchool" column="teacherSchool"/>
+        <result property="role" column="role"/>
+    </association>
+<collection property="listHomework" ofType="com.wzhy.pojo.Homework">
+    <id property="homeworkId" column="homeworkId"/>
+    <result property="publishDate" column="publishDate"/>
+    <result property="homeworkName" column="homeworkName"/>
+    <result property="homeworkIntroduction" column="homeworkIntroduction"/>
+    <result property="deadline" column="deadline"/>
+    <result property="maxScore" column="maxScore"/>
+    <result property="operateModel" column="operateModel"/>
+</collection>
+    <collection property="listStudent" ofType="com.wzhy.pojo.Student">
+        <id property="studentId" column="studentId"/>
+        <result property="studentPassword" column="studentPassword"/>
+        <result property="studentName" column="studentName"/>
+        <result property="studentNumber" column="studentNumber"/>
+        <result property="studentSchool" column="studentSchool"/>
+        <result property="role" column="role"/>
+    </collection>
+</resultMap>
+    <select id="getCourseByStudent" resultMap="courseMap">
+        select c.*,t.teacherName
+        from class.students s,class.stucourse sc,class.course c,
+        class.teacourse tc,class.teachers t
+        where  s.studentId = #{id}
+        and s.studentId = sc.studentId and sc.courseId = c.courseId
+        and c.courseId =  tc.courseId and tc.teacherId = t.teacherId
+        and sc.isdelete = 0
+    </select>
+<!--    <select id="getCourseByTeacher" resultMap="courseMap">-->
+<!--        select c.*,h.homeworkName from class.stucourse sc,class.course c,-->
+<!--        class.couhomework ch,class.homework h,-->
+<!--        class.teacourse tc,class.teachers t-->
+<!--        where t.teacherId = #{id}-->
+<!--        and t.teacherId = tc.teacherId and tc.courseId = c.courseId-->
+<!--        and c.courseId = ch.courseId and ch.homeworkId = h.homeworkId-->
+<!--        and tc.isdelete = 0-->
+<!--    </select>-->
+    <select id="getCourseByTeacher" resultMap="courseMap">
+        select c.* from class.teachers t,class.teacourse tc,class.course c
+        where
+        t.teacherId =#{id} and t.teacherId =tc.teacherId and tc.courseId = c.courseId and tc.isdelete=0
+    </select>
+<!--    老师查询课程和作业信息-->
+    <select id="queryCourseAndHomeworkTeacher" resultMap="courseMap">
+        select * from class.course c,class.couhomework ch,class.homework h
+        where   c.courseId = #{id} and c.courseId = ch.courseId and ch.homeworkId = h.homeworkId
+    </select>
+    <!--    学生查询课程和作业信息-->
+    <select id="queryCourseAndHomeworkStudent" resultMap="courseMap">
+        select * from class.course c,class.couhomework ch,class.homework h,class.stuhomework sh
+        where  c.courseId = #{id} and c.courseId = ch.courseId and ch.homeworkId = h.homeworkId
+    </select>
+<!--查询课程信息-->
+    <select id="queryCourse" resultMap="courseMap">
+        select * from class.course c
+        where  c.courseId = #{id}
+    </select>
+<!--    创建课程-->
+    <insert id="createCourse" parameterType="com.wzhy.pojo.Course">
+        insert into class.course (courseId, courseName, courseClass, courseYear, courseTerm, memberCount, operateModel)
+         values (#{courseId},#{courseName},#{courseClass},#{courseYear},#{courseTerm},0,0)
+</insert>
+<!--    学生删除课程-->
+    <delete id="deleteCourseByStudent" parameterType="com.wzhy.pojo.Course">
+        delete from class.stucourse where studentId = #{uid} and courseId = #{id}
+    </delete>
+    <!--    老师删除课程-->
+    <delete id="deleteCourseByTeacher" parameterType="com.wzhy.pojo.Course">
+        delete from class.teacourse where teacourse.teacherId = #{uid} and courseId = #{id}
+    </delete>
+<!--    学生加入课程-->
+    <insert id="insertCourseByStudent" >
+        insert into class.stucourse (studentId, courseId,isdelete)
+        values (#{uid}, #{courseId},0)
+    </insert>
+    <!--    老师加入课程-->
+    <insert id="insertCourseByTeacher" >
+        insert into class.teacourse(teacherId, courseId,isdelete)
+        values (#{uid}, #{courseId},0)
+    </insert>
+<!--    学生归档-->
+    <update id="guidangCourseByStudent" >
+        update class.stucourse set isdelete = 1 where courseId = #{id} and studentId=#{uid}
+    </update>
+<!--    学生归档恢复-->
+    <update id="guidangCourseByStudentRecover" >
+        update class.stucourse set isdelete = 0 where courseId = #{id} and studentId=#{uid}
+    </update>
+<!--    老师归档回复-->
+    <update id="guidangCourseByTeacherRecover" >
+        update class.teacourse set isdelete = 0 where courseId = #{id} and teacherId=#{uid}
+    </update>
+
+    <!--    老师归档-->
+    <update id="guidangCourseByTeacher" >
+        update class.teacourse set isdelete = 1 where courseId = #{id} and teacherId=#{uid}
+    </update>
+<!--    学生归档查询-->
+    <select id="guidangCourseByStudentQuery" resultMap="courseMap">
+        select * from class.stucourse sc,class.course c
+        where  sc.courseId = c.courseId
+        and sc.studentId = #{uid} and sc.isdelete=1
+    </select>
+</mapper>
+        <!--insertTeacher-->
